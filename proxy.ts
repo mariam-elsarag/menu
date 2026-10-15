@@ -36,20 +36,35 @@ export async function proxy(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/dashboard/");
   const isDashboardLoginRoute =
     request.nextUrl.pathname === "/dashboard/login";
+  const isLoginRoute =
+    isDashboardLoginRoute || request.nextUrl.pathname === "/login";
+  const isRootRoute = request.nextUrl.pathname === "/";
+  const isAuthenticated = !error && Boolean(claims);
 
-  if (isDashboardRoute && !isDashboardLoginRoute && (error || !claims)) {
-    const loginResponse = NextResponse.redirect(new URL("/login", request.url));
+  function redirectWithSession(pathname: string) {
+    const response = NextResponse.redirect(new URL(pathname, request.url));
 
     supabaseResponse.cookies.getAll().forEach((cookie) => {
-      loginResponse.cookies.set(cookie);
+      response.cookies.set(cookie);
     });
 
     for (const headerName of ["cache-control", "expires", "pragma"]) {
       const value = supabaseResponse.headers.get(headerName);
-      if (value) loginResponse.headers.set(headerName, value);
+      if (value) response.headers.set(headerName, value);
     }
 
-    return loginResponse;
+    return response;
+  }
+
+  if (isDashboardRoute && !isDashboardLoginRoute && !isAuthenticated) {
+    return redirectWithSession("/dashboard/login");
+  }
+
+  if (isRootRoute || isLoginRoute) {
+    if (isAuthenticated) return redirectWithSession("/dashboard/categories");
+    if (isRootRoute || request.nextUrl.pathname === "/login") {
+      return redirectWithSession("/dashboard/login");
+    }
   }
 
   return supabaseResponse;

@@ -9,7 +9,8 @@
   --menu-border: var(--border);
   --menu-muted-background: var(--secondary);
   --menu-success: var(--success);
-  --menu-unavailable: color-mix(in srgb, var(--foreground) 62%, transparent);
+  --menu-unavailable: rgba(51, 36, 31, 0.62);
+  min-height: 100vh;
   min-height: 100svh;
   background: var(--menu-background);
   color: var(--menu-text);
@@ -29,9 +30,10 @@
   }
 }
 
-@scope (.customerMenu) {
   .menuFrame {
-    width: min(100%, 500px);
+    width: 100%;
+    max-width: 500px;
+    min-height: 100vh;
     min-height: 100svh;
     margin-inline: auto;
     overflow: clip;
@@ -41,6 +43,7 @@
   }
 
   .heroBanner {
+    height: 180px;
     position: relative;
     aspect-ratio: 2.2 / 1;
     min-height: 138px;
@@ -274,6 +277,7 @@
   }
 
   .productImage {
+    height: 130px;
     position: relative;
     aspect-ratio: 1.35 / 1;
     overflow: hidden;
@@ -459,11 +463,14 @@
 
   .productSheet {
     position: relative;
-    width: min(100%, 500px);
+    width: 100%;
+    max-width: 500px;
+    max-height: 92vh;
     max-height: 92svh;
     overflow-y: auto;
     border-radius: 16px 16px 0 0;
     background: var(--menu-surface);
+    padding-bottom: 18px;
     padding-bottom: max(18px, env(safe-area-inset-bottom));
     animation: sheet-enter 180ms ease-out;
   }
@@ -497,6 +504,7 @@
   }
 
   .sheetPhoto {
+    height: 220px;
     position: relative;
     aspect-ratio: 1.7 / 1;
     overflow: hidden;
@@ -533,8 +541,10 @@
     inset-inline: 0;
     bottom: 0;
     z-index: 40;
-    width: min(100%, 500px);
+    width: 100%;
+    max-width: 500px;
     margin-inline: auto;
+    padding: 12px 16px 14px;
     padding: 12px 16px max(14px, env(safe-area-inset-bottom));
     pointer-events: none;
   }
@@ -598,10 +608,13 @@
   }
 
   .cartPage {
-    width: min(100%, 500px);
+    width: 100%;
+    max-width: 500px;
+    min-height: 100vh;
     min-height: 100svh;
     margin-inline: auto;
     background: var(--menu-surface);
+    padding: 16px 16px 30px;
     padding: max(16px, env(safe-area-inset-top)) 16px
       max(30px, env(safe-area-inset-bottom));
   }
@@ -789,6 +802,7 @@
 
   .statusPage {
     display: grid;
+    min-height: 62vh;
     min-height: 62svh;
     place-content: center;
     justify-items: center;
@@ -838,6 +852,7 @@
 
   .loadingScreen {
     display: grid;
+    min-height: 100vh;
     min-height: 100svh;
     place-items: center;
     background: var(--menu-background);
@@ -870,11 +885,55 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    * {
+    .customerMenu * {
       scroll-behavior: auto !important;
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
   }
-}
+
+  @supports (aspect-ratio: 1 / 1) {
+    .heroBanner,
+    .productImage,
+    .sheetPhoto {
+      height: auto;
+    }
+  }
+
+  @supports (color: color-mix(in srgb, black, transparent)) {
+    .customerMenu {
+      --menu-unavailable: color-mix(in srgb, var(--foreground) 62%, transparent);
+    }
+  }
+
+  @supports not (height: 100svh) {
+    .customerMenu,
+    .menuFrame,
+    .cartPage,
+    .loadingScreen {
+      min-height: 100vh;
+    }
+
+    .productSheet {
+      max-height: 92vh;
+    }
+
+    .statusPage {
+      min-height: 62vh;
+    }
+  }
+
+  @supports not (padding: max(18px, env(safe-area-inset-bottom))) {
+    .productSheet {
+      padding-bottom: 18px;
+    }
+
+    .cartActionPosition {
+      padding: 12px 16px 14px;
+    }
+
+    .cartPage {
+      padding: 16px 16px 30px;
+    }
+  }

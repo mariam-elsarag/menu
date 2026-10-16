@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import type { ReactNode } from "react";
-import "@/components/menu/customer-menu.module.css";
+import "@/components/menu/customer-menu.css";
 import styles from "@/components/menu/menu-styles";
 import { MenuCartProvider } from "@/components/menu/menu-cart-provider";
 
